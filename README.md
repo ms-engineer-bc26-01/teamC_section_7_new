@@ -63,7 +63,7 @@ URL： http://localhost:3000
 `git push origin feature/（作業名）`
 
 コミットメッセージ　ルール　例）  
-※新機能の追加 (feature)： 「feat」　`feat/login-page` 　
+※新機能の追加 (feature)： 「feat」　`feat/login-page`  
 ※バグや表示崩れの修正： 「fix」　`fix/header-design`  
 ※ドキュメント（READMEなど）の修正：「docs」 `docs/update-readme`  
 ※機能は変えず、コードを綺麗にした時： 「refactor」　`refactor/clean-code`
