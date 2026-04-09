@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:15 # ← これが「PostgreSQL 15をインストールせよ」という命令
+    container_name: hearts-weather-db
+    ports:
+      - "5432:5432" # ← コンテナの中のDBに、外からアクセスできるようにする設定
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hearts_db
+
+  backend:
+    build: ./backend
+    container_name: hearts-weather-backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/hearts_db
+    depends_on:
+      - db
+
+# frontendはローカル(npm run dev)で動かすため、ここには書かない
