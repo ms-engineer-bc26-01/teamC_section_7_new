@@ -1,93 +1,63 @@
 "use client";
 
-import React from 'react';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../lib/firebase";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+
   return (
-    // ① 全画面背景
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E6F7FF] via-white to-[#FFE4F1] relative overflow-hidden font-sans p-4">
+    <main className="min-h-screen flex items-center justify-center bg-sky-50">
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6">ログイン</h1>
 
-      {/* ② 背景のぼかし装飾 */}
-      <div className="absolute -top-24 -left-24 w-[32rem] h-[32rem] bg-[#A7E3FF]/20 rounded-full blur-3xl select-none" />
-      <div className="absolute -bottom-24 -right-24 w-[28rem] h-[28rem] bg-[#FFC1DD]/25 rounded-full blur-3xl select-none" />
+        <form
+          className="space-y-4"
+          onSubmit={async (e) => {
+            e.preventDefault();
 
-      {/* ③ メインコンテナ */}
-      <div className="relative z-10 drop-shadow-[0_25px_60px_rgba(167,227,255,0.35)] transform scale-100 sm:scale-110 transition-all">
+            const formData = new FormData(e.currentTarget);
+            const email = formData.get("email");
+            const password = formData.get("password");
 
-        {/* ④ 楕円カード */}
-        <div
-          className="w-[720px] h-[500px] bg-white/90 backdrop-blur-xl rounded-[380px/260px]
-                     flex items-center justify-center px-24 border border-white/60
-                     shadow-[inset_0_0_25px_rgba(255,255,255,0.8)]"
+            try {
+              const userCredential = await signInWithEmailAndPassword(
+                auth,
+                email as string,
+                password as string
+              );
+
+              console.log("ログイン成功", userCredential.user);
+              router.push("/home");
+            } catch (error) {
+              console.error("ログイン失敗", error);
+              alert("ログイン失敗！");
+            }
+          }}
         >
+          <input
+            type="email"
+            name="email"
+            placeholder="メールアドレス"
+            className="w-full border p-3 rounded"
+          />
 
-          {/* ⑤ フォームエリア */}
-          <div className="w-full max-w-[320px] text-center">
+          <input
+            type="password"
+            name="password"
+            placeholder="パスワード"
+            className="w-full border p-3 rounded"
+          />
 
-            {/* タイトル */}
-            <div className="mb-6">
-              <h1 className="text-[34px] font-bold text-[#4BA3E3] tracking-wider drop-shadow-sm">
-                こころの天気
-              </h1>
-
-              {/* 装飾ライン */}
-              <div className="h-[3px] w-16 bg-[#BFE9FF] mx-auto mt-3 rounded-full opacity-80" />
-            </div>
-
-            {/* サブタイトル */}
-            <p className="text-gray-400 text-sm mb-10 font-medium tracking-wide">
-              今日の気持ちを教えてね ☁️
-            </p>
-
-            {/* 入力フォーム */}
-            <div className="space-y-5">
-
-              {/* メール入力 */}
-              <div>
-                <input
-                  type="email"
-                  placeholder="メールアドレス"
-                  className="w-full px-6 py-4 bg-[#F7FDFF] border border-[#E6F6FF]
-                             rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#A7E3FF]
-                             transition-all placeholder:text-[#C7CDD3]
-                             text-sky-800 shadow-inner text-base"
-                />
-              </div>
-
-              {/* パスワード入力 */}
-              <div>
-                <input
-                  type="password"
-                  placeholder="パスワード"
-                  className="w-full px-6 py-4 bg-[#F7FDFF] border border-[#E6F6FF]
-                             rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#A7E3FF]
-                             transition-all placeholder:text-[#C7CDD3]
-                             text-sky-800 shadow-inner text-base"
-                />
-              </div>
-
-              {/* ログインボタン */}
-              <button
-                className="w-full py-4 bg-gradient-to-r from-[#00CFFF] to-[#7ADFFF]
-                           text-white font-bold rounded-2xl
-                           hover:scale-[1.03] active:scale-[0.97]
-                           transition-all shadow-lg shadow-sky-200
-                           mt-6 text-lg tracking-widest"
-              >
-                ログイン
-              </button>
-
-            </div>
-
-          </div>
-        </div>
+          <button
+            type="submit"
+            className="w-full bg-sky-500 text-white py-3 rounded"
+          >
+            ログイン
+          </button>
+        </form>
       </div>
-
-      {/* ⑥ 背景のキラキラ */}
-      <div className="absolute bottom-10 right-10 text-white opacity-40 text-4xl select-none animate-pulse">
-        ✦
-      </div>
-
     </main>
   );
 }
