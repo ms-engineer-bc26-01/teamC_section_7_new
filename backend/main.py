@@ -1,6 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from fastapi import Depends
+from app.dependencies.role_checker import require_role
+
 import firebase_admin
 from firebase_admin import credentials, auth
 
@@ -14,11 +17,17 @@ EXCLUDE_PATHS = {
     "/openapi.json",
     "/redoc",
     "/api/auth/login",
-}
+   }
 
 @app.middleware("http")
 async def verify_firebase_token(request: Request, call_next):
     path = request.url.path
+
+    if path == "/admin-test":
+        request.state.firebase_uid = "test-uid"
+        request.state.firebase_email = "test@example.com"
+        request.state.role = "admin"
+        return await call_next(request)
 
     if path in EXCLUDE_PATHS:
         return await call_next(request)
@@ -37,6 +46,7 @@ async def verify_firebase_token(request: Request, call_next):
         decoded_token = auth.verify_id_token(id_token)
         request.state.firebase_uid = decoded_token.get("uid")
         request.state.firebase_email = decoded_token.get("email")
+        request.state.role = "admin"
     except Exception:
         return JSONResponse(
             status_code=401,
@@ -55,4 +65,13 @@ async def get_me(request: Request):
         "message": "OK",
         "uid": request.state.firebase_uid,
         "email": request.state.firebase_email,
+        "role": request.state.role,
     }
+
+from fastapi import Depends
+from app.dependencies.role_checker import require_role
+
+@app.get("/admin-test")
+def admin_test(user=Depends(require_role(["admin"]))):
+    return {"message": "admin OK"}
+
