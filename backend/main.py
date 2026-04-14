@@ -1,4 +1,8 @@
-<<<<<<< HEAD
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -9,7 +13,8 @@ import firebase_admin
 from firebase_admin import credentials, auth
 
 if not firebase_admin._apps:
-    cred = credentials.Certificate("./serviceAccountKey.json")
+    cred_path = os.getenv("FIREBASE_CREDENTIAL_PATH")
+    cred = credentials.Certificate(cred_path)
     firebase_admin.initialize_app(cred)
 
 app = FastAPI()
@@ -76,7 +81,6 @@ from app.dependencies.role_checker import require_role
 def admin_test(user=Depends(require_role(["admin"]))):
     return {"message": "admin OK"}
 
-=======
 from fastapi import FastAPI, HTTPException
 from prisma import Prisma
 from contextlib import asynccontextmanager
@@ -179,4 +183,3 @@ async def delete_report(report_id: int):
         return {"message": f"記録 {report_id} をDBから削除しました"}
     except Exception:
         raise HTTPException(status_code=404, detail="指定された記録が見つかりません")
->>>>>>> origin/main
