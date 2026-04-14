@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider             = "prisma-client-py"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------
+// モデル定義
+// -----------------------------------------
+
+// ユーザー（児童・先生）
+model User {
+  id             Int             @id @default(autoincrement())
+  name           String
+  role           String          // "student" (児童) or "teacher" (先生)
+  weatherReports WeatherReport[] // 一対多の関連（一人が複数の記録を持つ）
+  createdAt      DateTime        @default(now())
+}
+
+// 天気の記録（児童が毎日つけるもの）
+model WeatherReport {
+  id        Int      @id @default(autoincrement())
+  condition String   // "sunny", "cloudy", "rainy" など
+  comment   String?  // コメント（必須項目にはしてない＝空欄でもOK）
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int      // 誰の投稿かを示すID
+  createdAt DateTime @default(now())
+}
