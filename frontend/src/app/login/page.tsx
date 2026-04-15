@@ -1,8 +1,35 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  // 状態管理（追加）
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // ログイン処理（仮）
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("メールとパスワードを入力してください");
+      return;
+    }
+
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      alert("ログイン成功（仮）");
+
+      console.log(email, password);
+
+      router.push("/");
+    }, 800);
+  };
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E6F7FF] via-white to-[#FFE4F1] relative overflow-hidden p-4">
 
@@ -44,6 +71,8 @@ export default function LoginPage() {
               <input
                 type="email"
                 placeholder="メールアドレス"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-6 py-4 bg-[#F7FDFF] border border-[#E6F6FF]
                            rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#A7E3FF]
                            transition-all placeholder:text-[#C7CDD3]
@@ -55,6 +84,9 @@ export default function LoginPage() {
               <input
                 type="password"
                 placeholder="パスワード"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                 className="w-full px-6 py-4 bg-[#F7FDFF] border border-[#E6F6FF]
                            rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#A7E3FF]
                            transition-all placeholder:text-[#C7CDD3]
@@ -64,13 +96,16 @@ export default function LoginPage() {
 
               {/* ボタン */}
               <button
+                onClick={handleLogin}
+                disabled={loading}
                 className="w-full py-4 bg-gradient-to-r from-[#00CFFF] to-[#7ADFFF]
                            text-white font-bold rounded-2xl
                            hover:scale-[1.05] active:scale-[0.96]
                            transition-all shadow-lg shadow-sky-200
-                           mt-6 text-lg tracking-widest"
+                           mt-6 text-lg tracking-widest
+                           disabled:opacity-50"
               >
-                ログインする ☀️
+                {loading ? "ログイン中..." : "ログインする ☀️"}
               </button>
 
             </div>
