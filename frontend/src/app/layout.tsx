@@ -31,9 +31,9 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className={`${zenMaru.className} min-h-full flex flex-col`}>
+      <body className={`${zenMaru.className} min-h-screen flex flex-col`}>
         {children}
       </body>
     </html>
