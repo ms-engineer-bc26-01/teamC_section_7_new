@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../lib/firebase";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -11,7 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ログイン処理（仮）
+    // ログイン処理（仮）
   const handleLogin = async () => {
     if (!email || !password) {
       alert("メールとパスワードを入力してください");
@@ -20,15 +22,28 @@ export default function LoginPage() {
 
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      alert("ログイン成功（仮）");
+    try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-      console.log(email, password);
+     console.log("ログイン成功", userCredential.user);
+     router.push("/home");
+   } catch (error) {
+     console.error("ログイン失敗", error);
+     alert("ログイン失敗！");
+   } finally {
+     setLoading(false);
+  }
+};
 
-      router.push("/");
-    }, 800);
-  };
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-sky-50">
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6">ログイン</h1>        
+    
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E6F7FF] via-white to-[#FFE4F1] relative overflow-hidden p-4">
@@ -46,6 +61,13 @@ export default function LoginPage() {
                      flex items-center justify-center px-24 border border-white/60
                      shadow-[inset_0_0_25px_rgba(255,255,255,0.8)]"
         >
+          <input
+            type="email"
+            name="email"
+            placeholder="メールアドレス"
+            className="w-full border p-3 rounded"
+          />
+
 
           {/* フォーム */}
           <div className="w-full max-w-[320px] text-center">
